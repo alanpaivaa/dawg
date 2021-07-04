@@ -87,19 +87,20 @@ class NFA:
         return pickle.load(open(filename, "rb"))
 
 
-parser = AutomataArgParser()
-args = parser.parse()
+if __name__ == '__main__':
+    parser = AutomataArgParser()
+    args = parser.parse()
 
-if args.output:
-    nfa = NFA(args=args)
-    filename = args.output
-    nfa.save(filename)
-    print("NFA successfully saved to {}".format(filename))
-else:
-    filename = args.load
-    nfa = NFA.load(filename)
-    if nfa.accepts(args.accept):
-        print('Accepted')
+    if args.output:
+        nfa = NFA(args=args)
+        filename = args.output
+        nfa.save(filename)
+        print("NFA successfully saved to {}".format(filename))
     else:
-        print('Rejected')
-        exit(1)
+        filename = args.load
+        nfa = NFA.load(filename)
+        if nfa.accepts(args.accept):
+            print('Accepted')
+        else:
+            print('Rejected')
+            exit(1)
