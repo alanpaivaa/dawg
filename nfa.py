@@ -1,39 +1,39 @@
 import pickle
 from automata_arg_parser import AutomataArgParser
 
-# TODO: Parse args
-# TODO: Check if input symbols are valid
-# TODO Check if transition exists
-# TODO: Save automaton
-
-
-# -st q0,q1,q2,q3 -sy 0,1 -is q0 -fs q3 -t q0|0:q0 -t q0|1:q0,q1 -t q1|0:q2 -t q1|1:q2 -t q2|0:q3 -t q2|1:q3 -l test_fda.aut -a 100
 
 class NFA:
-    def __init__(self, args):
-        self.states = None
-        self.input_symbols = None
-        self.initial_state = args.initial_state
-        self.final_states = None
-        self.transitions = None
+    def __init__(self, states, input_symbols, initial_state, final_states, transitions):
+        self.states = states
+        self.input_symbols = input_symbols
+        self.initial_state = initial_state
+        self.final_states = final_states
+        self.transitions = transitions
 
-        self.parse_states(args)
-        self.parse_input_symbols(args)
-        self.parse_final_states(args)
-        self.parse_transitions(args)
+    @classmethod
+    def from_args(klass, args):
+        states = klass.parse_states(args)
+        input_symbols = klass.parse_input_symbols(args)
+        final_states = klass.parse_final_states(args)
+        transitions = klass.parse_transitions(args, states, input_symbols)
+        return klass(states, input_symbols, args.initial_state, final_states, transitions)
 
-    def parse_states(self, args):
-        self.states = set(args.states.split(','))
+    @staticmethod
+    def parse_states(args):
+        return set(args.states.split(','))
 
-    def parse_input_symbols(self, args):
-        self.input_symbols = set(args.symbols.split(','))
+    @staticmethod
+    def parse_input_symbols(args):
+        return set(args.symbols.split(','))
 
-    def parse_final_states(self, args):
-        self.final_states = set(args.final_states.split(','))
+    @staticmethod
+    def parse_final_states(args):
+        return set(args.final_states.split(','))
 
-    def parse_transitions(self, args):
+    @staticmethod
+    def parse_transitions(args, states, input_symbols):
         transitions_str = [t[0] for t in args.transition]
-        self.transitions = dict()
+        transitions = dict()
         for t in transitions_str:
             # Split source state from the rest
             comps = t.split('-')
@@ -45,17 +45,19 @@ class NFA:
             # Set destination states
             new_states_str = comps[2]
             destination_states = set(new_states_str.split(','))
-            if self.transitions.get(origin_state) is None:
-                self.transitions[origin_state] = dict()
-            self.transitions[origin_state][symbol] = destination_states
+            if transitions.get(origin_state) is None:
+                transitions[origin_state] = dict()
+            transitions[origin_state][symbol] = destination_states
 
         # Fill in with empty transitions
-        for origin_state in self.states:
-            if self.transitions.get(origin_state) is None:
-                self.transitions[origin_state] = dict()
-            for symbol in self.input_symbols:
-                if self.transitions[origin_state].get(symbol) is None:
-                    self.transitions[origin_state][symbol] = set()
+        for origin_state in states:
+            if transitions.get(origin_state) is None:
+                transitions[origin_state] = dict()
+            for symbol in input_symbols:
+                if transitions[origin_state].get(symbol) is None:
+                    transitions[origin_state][symbol] = set()
+
+        return transitions
 
     def accepts(self, input_chain):
         current_states = {self.initial_state}
@@ -92,7 +94,7 @@ if __name__ == '__main__':
     args = parser.parse()
 
     if args.output:
-        nfa = NFA(args=args)
+        nfa = NFA.from_args(args)
         filename = args.output
         nfa.save(filename)
         print("NFA successfully saved to {}".format(filename))

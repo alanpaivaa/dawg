@@ -16,19 +16,20 @@ class DFA(NFA):
                     exit(1)
 
 
-parser = AutomataArgParser()
-args = parser.parse()
+if __name__ == '__main__':
+    parser = AutomataArgParser()
+    args = parser.parse()
 
-if args.output:
-    dfa = DFA(args=args)
-    filename = args.output
-    dfa.save(filename)
-    print("DFA successfully saved to {}".format(filename))
-else:
-    filename = args.load
-    dfa = DFA.load(filename)
-    if dfa.accepts(args.accept):
-        print('Accepted')
+    if args.output:
+        dfa = DFA.from_args()
+        filename = args.output
+        dfa.save(filename)
+        print("DFA successfully saved to {}".format(filename))
     else:
-        print('Rejected')
-        exit(1)
+        filename = args.load
+        dfa = DFA.load(filename)
+        if dfa.accepts(args.accept):
+            print('Accepted')
+        else:
+            print('Rejected')
+            exit(1)
