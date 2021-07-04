@@ -15,19 +15,27 @@ class DFA(NFA):
                     print("DFA can't have more than one destination state in transitions")
                     exit(1)
 
+    def transition_str(self, state, symbol):
+        ts = sorted(list(self.transitions[state][symbol]))
+        if len(ts) == 0:
+            return ''
+        return ts[0]
+
 
 if __name__ == '__main__':
     parser = AutomataArgParser()
     args = parser.parse()
 
     if args.output:
-        dfa = DFA.from_args()
+        dfa = DFA.from_args(args)
         filename = args.output
         dfa.save(filename)
         print("DFA successfully saved to {}".format(filename))
     else:
         filename = args.load
         dfa = DFA.load(filename)
+        print("---------- DFA ----------\n{}\n-------------------------".format(dfa))
+        print("Result: ", end="")
         if dfa.accepts(args.accept):
             print('Accepted')
         else:

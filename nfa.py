@@ -88,6 +88,30 @@ class NFA:
     def load(filename):
         return pickle.load(open(filename, "rb"))
 
+    def transition_str(self, state, symbol):
+        ts = sorted(list(self.transitions[state][symbol]))
+        if len(ts) == 0:
+            return ''
+        return "{}".format(ts)
+
+    def __str__(self):
+        sorted_states = sorted(list(self.states))
+        sorted_input_symbols = sorted(list(self.input_symbols))
+        transitions_array = list()
+        for state in sorted_states:
+            for symbol in sorted_input_symbols:
+                ts = self.transition_str(state, symbol)
+                if len(ts) > 0:
+                    transitions_array.append("{} x {} -> {}".format(state, symbol, ts))
+        transitions_str = "\n".join(transitions_array)
+        return "States: {}\nInput Symbols: {}\nInitial State: {}\nFinal States: {}\nTransitions:\n{}" \
+            .format(sorted_states,
+                    sorted_input_symbols,
+                    self.initial_state,
+                    sorted(list(self.final_states)),
+                    transitions_str
+        )
+
 
 if __name__ == '__main__':
     parser = AutomataArgParser()
@@ -101,6 +125,8 @@ if __name__ == '__main__':
     else:
         filename = args.load
         nfa = NFA.load(filename)
+        print("---------- NFA ----------\n{}\n-------------------------".format(nfa))
+        print("Result: ", end="")
         if nfa.accepts(args.accept):
             print('Accepted')
         else:
