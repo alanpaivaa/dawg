@@ -36,15 +36,14 @@ class NFA:
         self.transitions = dict()
         for t in transitions_str:
             # Split source state from the rest
-            comps = t.split('|')
+            comps = t.split('-')
             origin_state = comps[0]
 
             # Split input symbol from destination states
-            sub_comps = comps[1].split(':')
-            symbol = sub_comps[0]
+            symbol = comps[1]
 
             # Set destination states
-            new_states_str = sub_comps[1]
+            new_states_str = comps[2]
             destination_states = set(new_states_str.split(','))
             if self.transitions.get(origin_state) is None:
                 self.transitions[origin_state] = dict()
@@ -82,7 +81,6 @@ class NFA:
 
     def save(self, filename):
         pickle.dump(self, open(filename, "wb"))
-        print("Automaton saved to {}".format(filename))
 
     @staticmethod
     def load(filename):
@@ -103,5 +101,5 @@ else:
     if nfa.accepts(args.accept):
         print('Accepted')
     else:
-        print('Not accepted')
+        print('Rejected')
         exit(1)
