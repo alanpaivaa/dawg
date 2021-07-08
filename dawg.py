@@ -249,7 +249,7 @@ elif args.mode == 'nfa' or args.mode == 'dfa':
         time_sum += time.time() - start_time
         if res == row[0]:
             pred_count += 1
-    print("Taxa de acerto: {:.2f}%".format(pred_count / len(test_set) * 100))
+    print("Accuracy: {:.2f}%".format(pred_count / len(test_set) * 100))
     print("Total time processing strings: {:.5f}ms".format(time_sum * 1000))
     print("Average string processing time: {:.5f}ms".format(time_sum / len(test_set) * 1000))
 else:
