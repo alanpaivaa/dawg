@@ -112,6 +112,12 @@ class NFA:
                     transitions_str
         )
 
+    def add_transition(self, origin, char, dest):
+        self.transitions[origin][char].add(dest)
+
+    def remove_transition(self, origin, char, dest):
+        self.transitions[origin][char].remove(dest)
+
 
 if __name__ == '__main__':
     parser = AutomataArgParser()

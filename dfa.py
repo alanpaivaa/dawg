@@ -3,15 +3,18 @@ from nfa import NFA
 
 
 class DFA(NFA):
-    def parse_transitions(self, args):
-        super().parse_transitions(args)
-        self.validate_transitions()
+    @staticmethod
+    def parse_transitions(args, states, input_symbols):
+        transitions = NFA.parse_transitions(args, states, input_symbols)
+        DFA.validate_transitions(transitions, states, input_symbols)
+        return transitions
 
-    def validate_transitions(self):
+    @staticmethod
+    def validate_transitions(transitions, states, input_symbols):
         # Validate transitions
-        for state in self.states:
-            for symbol in self.input_symbols:
-                if len(self.transitions[state][symbol]) > 1:
+        for state in states:
+            for symbol in input_symbols:
+                if len(transitions[state][symbol]) > 1:
                     print("DFA can't have more than one destination state in transitions")
                     exit(1)
 
