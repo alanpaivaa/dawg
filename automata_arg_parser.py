@@ -14,7 +14,7 @@ class AutomataArgParser:
                             action='append',
                             nargs='+')
         parser.add_argument("-l", "--load", help="Path where the resulting automaton will be written to")
-        parser.add_argument("-output", "--output", help="Path to file containing an automaton")
+        parser.add_argument("-o", "--output", help="Path to file containing an automaton")
         parser.add_argument("-a", "--accept", help="Pass a string to check acceptance")
 
         args = parser.parse_args()
